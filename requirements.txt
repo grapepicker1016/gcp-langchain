@@ -3,3 +3,4 @@ gunicorn
 langchain
 openai
 python-dotenv
+pipedrive-python-lib

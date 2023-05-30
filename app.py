@@ -1,7 +1,6 @@
 
 from flask import Flask, jsonify, make_response, request
-from utils import create_chain
-
+from agents.conversation_agent import conversation_agent
 
 app = Flask(__name__)
 
@@ -17,13 +16,32 @@ def chat():
     try:
         data = request.json
         message = data["message"]
-        chatgpt_chain = create_chain()
-        prediction = chatgpt_chain.predict(human_input=message)
-        
-        return jsonify({"success": True, "data": prediction})
+        result = conversation_agent(message)
+        return jsonify({"success": True, "data": {result}})
     except:
         return make_response(
             jsonify(
                 {"success": False, 
                  "error": "Unexpected error: failed to send the message"}),
             400)
+
+@app.route("/", methods =["GET"])
+def test():
+    try:
+        return make_response(
+            jsonify(
+            {
+                "success": True,
+                "data": "It is working"
+            }
+            )
+        )
+    except:
+        return make_response(
+            jsonify(
+            {
+                "success": False,
+                "error": "Unexpected error"
+            }
+            )
+        )
