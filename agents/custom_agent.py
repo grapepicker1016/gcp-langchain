@@ -13,7 +13,6 @@ import re
 from os import getenv
 from dotenv import load_dotenv
 from langchain.tools import StructuredTool
-from typing import Optional
 import os
 import json
 from pipedrive.client import Client
@@ -23,29 +22,17 @@ load_dotenv()
 client = Client(domain="https://trufaarte.pipedrive.com/")
 PIPEDRIVE_API_KEY = os.getenv("PIPEDRIVE_API_KEY")
 client.set_api_token(PIPEDRIVE_API_KEY)
-print(f"PIPEDRIVE_API_KEY: {PIPEDRIVE_API_KEY}")
+OPENAI_API_KEY = getenv("OPENAI_API_KEY")
 
 
 def get_person_details(phone: str) -> str:
     """Returns the person details using the phone number."""
-    # phone = phone or "5580496309"
-    # print(f"phone number: {phone}")
-
-    if "=" in phone:
-        phone = phone.split("=")[1]
-
-    print(f"phone number 2: {phone}")
     result = client.persons.search_persons(params={"term": phone, "fields": "phone"})
-
-    print(f"result: {result}")
 
     return json.dumps(result)
 
 
 get_person_details_tool = StructuredTool.from_function(get_person_details)
-
-load_dotenv()
-OPENAI_API_KEY = getenv("OPENAI_API_KEY")
 
 
 tools = [
